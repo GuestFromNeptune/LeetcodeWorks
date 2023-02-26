@@ -50,10 +50,11 @@ def isMatch(s, p):
                 print("L",sys._getframe().f_lineno,"\ts[",iSub_s ,"+", iSub_p,"]",s[iSub_s + iSub_p],"<===>p[",iSub_p,"]:",p[iSub_p],"<=lastchar==>",lastChar)
             except:
                 print("L",sys._getframe().f_lineno,"\ts[iSub_s(",iSub_s ,")+(", iSub_p,")]","<===>p[",iSub_p,"]<=lastchar==>",lastChar)
-            if (p[iSub_p]=="" and s[iSub_s + iSub_p:]!=""):
+            if (p[iSub_p:]=="" and s[iSub_s + iSub_p:]!=""):
+                '''
                 bLastMatchFlag = False
-                
                 bInnerJumpFlag = True
+                '''
                 print("L",sys._getframe().f_lineno,"return FALSE")
                 return False
             try:
@@ -75,10 +76,15 @@ def isMatch(s, p):
                 print("L",sys._getframe().f_lineno,"s[iSub_s + iSub_p] == p[iSub_p]")
                 print("L",sys._getframe().f_lineno,"\ts[",iSub_s ,"+", iSub_p,"]",s[iSub_s + iSub_p],"<===>p[",iSub_p,"]:",p[iSub_p],"<=lastchar==>",lastChar)
                 lastChar = p[iSub_p]
+                bInnerJumpFlag = False
+                bLastMatchFlag = True
                 
-                #判断
-                if  (iSub_p + iSub_s  == iStrLen -1): #and (iSub_p + iSub_s == iStrLen -1):
-                    print("L",sys._getframe().f_lineno,"(iSub_p + iSub_s  == iStrLen -1)")
+                #判断            #需要用新的判定方式
+                if (s[iSub_s + iSub_p+1:]==""):  #s字符串走到最后
+                    print("L",sys._getframe().f_lineno,"(s[iSub_s + iSub_p+1:]=="")")
+                #--------------------    
+                #if  (iSub_p + iSub_s  == iStrLen -1): #and (iSub_p + iSub_s == iStrLen -1):
+                #    print("L",sys._getframe().f_lineno,"(iSub_p + iSub_s  == iStrLen -1)")
                     if (iSub_p < iPatternLen -2) :
                         if (p[iSub_p + 2] == "*"):
                             print("L",sys._getframe().f_lineno,"(p[iSub_p + 2] == *)","return TRUE")
@@ -93,12 +99,18 @@ def isMatch(s, p):
                         print("L",sys._getframe().f_lineno,"(iSub_p + iSub_s  == iStrLen -1)","return TRUE")
                         bLastMatchFlag = True
                         return True
+                elif  (p[iSub_p+1:]=="") :
+                        if(p[iSub_p]!="*"): #s未结束，p结束了
+                            return False
+                        else:
+                            return True
+                    
                 
                 if (iSub_p == iPatternLen -1) and (iSub_s  == iStrLen -1):
+                    print("L",sys._getframe().f_lineno,"(iSub_p == iPatternLen -1) and (iSub_s  == iStrLen -1)")
                     return True
+                #end of 判断
                 
-                bInnerJumpFlag = False
-                bLastMatchFlag = True
                 
                 print("L",sys._getframe().f_lineno,"To Next loop")
                 #若continue，bInnerJumpFlag 为false，若break则为True；
@@ -159,20 +171,16 @@ def isMatch(s, p):
             iSub_s += 1
         
         #最好在这里不用作判断了…………………………………………
-        
+        '''
         if ((iSub_p > iPatternLen -1) or (iSub_s >iStrLen-1)) : 
             print("L",sys._getframe().f_lineno,"iSub_p (",iSub_p,") > iPatternLen(",iPatternLen,") -1, returning")
             print("L",sys._getframe().f_lineno,"iSub_s (",iSub_s,") > iStrLen(",iStrLen,") , returning")
-            '''
-            if (iSub_p > iPatternLen -1) and (iSub_s < iStrLen-1) and bLastMatchFlag == False:
-                return False
-            else:
-            '''
+
             return bLastMatchFlag
         
         if (iSub_s + iSub_p +1 > iStrLen-1):
             return bLastMatchFlag
-        
+        '''
         #………………………………………………………………………………………………
         
     return bInnerJumpFlag
@@ -187,9 +195,9 @@ print(isMatch(s="aa",p="a"))#<------False
 print(isMatch(s="aa",p="a*"))#<------True
 print(isMatch(s="aa",p="ab"))#<------False
 print(isMatch(s="ab",p=".*"))#<------True-----正则式应匹配最大字符串
-print(isMatch(s="aab",p="c*a*b"))<------True-----
+print(isMatch(s="aab",p="c*a*b"))#<------True-----
+print(isMatch(s="ab",p=".*c"))#<------False
+print(isMatch(s="aaa",p=".*"))#<------True
 '''
-#print(isMatch(s="ab",p=".*c"))#<------False
-print(isMatch(s="aaa",p=".*"))#<------False
-
+print(isMatch(s="a",p="ab*a"))#<------True
 #以上不完全正常，leetcode中358个案例大概能通过259个。
